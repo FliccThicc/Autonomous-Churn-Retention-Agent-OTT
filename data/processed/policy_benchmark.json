@@ -1,0 +1,41 @@
+{
+  "holdout_rows": 3000,
+  "horizon_days": 90,
+  "net_revenue_retained_inr_lakhs": {
+    "No Intervention (Status Quo)": 7.2033,
+    "Naive Blanket Discount Baseline": 7.006,
+    "Autonomous LangGraph Retention Agent": 8.9792
+  },
+  "retention_roi_pct": {
+    "No Intervention (Status Quo)": 0.0,
+    "Naive Blanket Discount Baseline": -23.28,
+    "Autonomous LangGraph Retention Agent": 2968.48
+  },
+  "discount_leakage_prevented_inr": 78767.37,
+  "archetype_breakdown": {
+    "Paid_Tier_Ad_Fatigue": {
+      "subscriber_count": 643,
+      "at_risk_count": 446,
+      "save_rate": 0.3206,
+      "net_margin_inr": 49046.48
+    },
+    "IPL_Post_Tournament_Cliff": {
+      "subscriber_count": 428,
+      "at_risk_count": 363,
+      "save_rate": 0.3691,
+      "net_margin_inr": 59411.75
+    },
+    "UPI_AutoPay_Friction": {
+      "subscriber_count": 395,
+      "at_risk_count": 274,
+      "save_rate": 0.3869,
+      "net_margin_inr": 49189.6
+    },
+    "Mobile_Screen_Limit_Friction": {
+      "subscriber_count": 322,
+      "at_risk_count": 229,
+      "save_rate": 0.3886,
+      "net_margin_inr": 19945.54
+    }
+  }
+}
