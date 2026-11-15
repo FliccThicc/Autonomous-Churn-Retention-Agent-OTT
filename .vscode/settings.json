@@ -1,0 +1,47 @@
+{
+  // 1. Strict Python .venv Isolation (Windows)
+  "python.defaultInterpreterPath": "${workspaceFolder}\\.venv\\Scripts\\python.exe",
+  "python.terminal.activateEnvironment": true,
+  "python.terminal.activateEnvInCurrentTerminal": true,
+  "python.analysis.typeCheckingMode": "basic",
+  "python.analysis.autoImportCompletions": true,
+
+  // 2. Jupyter & Data Science Notebooks
+  "jupyter.notebookFileRoot": "${workspaceFolder}",
+  "notebook.output.textLineLimit": 50,
+  "notebook.formatOnSave.enabled": true,
+
+  // 3. GitHub Copilot Student Credit & Agent Guardrails
+  "chat.agent.maxRequests": 40,
+  "github.copilot.nextEditSuggestions.enabled": true,
+  "chat.tools.terminal.enableAutoApprove": true,
+  "chat.tools.terminal.autoApprove": {
+    "uv": true,
+    "pytest": true,
+    "ruff": true,
+    "git status": true,
+    "git diff": true,
+    "/^\\.venv\\\\Scripts\\\\python\\.exe/": true,
+    "rm": false,
+    "rmdir": false,
+    "del": false,
+    "pip": false,
+    "/^Remove-Item\\b/i": false
+  },
+
+  // 4. Clean Workspace & Large Parquet/CSV Protection
+  "files.watcherExclude": {
+    "**/.venv/**": true,
+    "**/data/raw/**": true,
+    "**/__pycache__/**": true
+  },
+  "search.exclude": {
+    "**/.venv": true,
+    "**/data/raw": true,
+    "**/*.parquet": true
+  },
+  "files.associations": {
+    "*.parquet": "default"
+  }
+}
+
