@@ -265,7 +265,20 @@ def _cloud_copy(profile: dict, offer: RetentionOffer, diagnosis: ChurnDiagnosis)
 
 
 def _ollama_copy(profile: dict, offer: RetentionOffer, diagnosis: ChurnDiagnosis) -> str | None:
-    prompt = _template_copy(profile, offer, diagnosis)
+    titles = ", ".join(
+        str(show.get("series_title", "")).strip()
+        for show in offer.recommended_shows
+        if show.get("series_title")
+    ) or "our latest regional favourites"
+    prompt = (
+        f"Write a friendly, 2-sentence customer retention message under 45 words in "
+        f"{profile.get('preferred_language', 'Hindi')} for {profile.get('name', profile.get('subscriber_id', 'the subscriber'))}. "
+        f"Offer: {offer.title}. Recommended TV series on our streaming catalog "
+        f"(official show titles): {titles}. These are fictional/catalog TV series "
+        "streaming on JioHotstar/SonyLIV. Write a friendly, 2-sentence customer "
+        "retention message under 45 words inviting the subscriber to watch these "
+        "shows. Do not invent discounts or discuss real-world events."
+    )
     payload = {
         "model": os.getenv("OLLAMA_MODEL", "qwen3.5:9b"),
         "prompt": prompt,
@@ -291,6 +304,9 @@ def _ollama_copy(profile: dict, offer: RetentionOffer, diagnosis: ChurnDiagnosis
             return None
         message = re.sub(r"<think>.*?</think>", "", message, flags=re.IGNORECASE | re.DOTALL)
         message = re.sub(r"</?think>", "", message, flags=re.IGNORECASE).strip()
+        invalid_markers = ("i cannot provide", "assassination", "sensitive historical")
+        if len(message) > 350 or any(marker in message.lower() for marker in invalid_markers):
+            return None
         return message or None
     except (OSError, json.JSONDecodeError, AttributeError):
         return None
