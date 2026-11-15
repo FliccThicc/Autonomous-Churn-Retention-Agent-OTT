@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import urllib.request
 from pathlib import Path
 from typing import Any
@@ -265,19 +266,32 @@ def _cloud_copy(profile: dict, offer: RetentionOffer, diagnosis: ChurnDiagnosis)
 
 def _ollama_copy(profile: dict, offer: RetentionOffer, diagnosis: ChurnDiagnosis) -> str | None:
     prompt = _template_copy(profile, offer, diagnosis)
+    payload = {
+        "model": os.getenv("OLLAMA_MODEL", "qwen3.5:9b"),
+        "prompt": prompt,
+        "stream": False,
+        "think": False,
+        "options": {
+            "num_ctx": 4096,
+            "num_predict": 180,
+            "temperature": 0.4,
+        },
+    }
     request = urllib.request.Request(
         "http://localhost:11434/api/generate",
-        data=json.dumps(
-            {"model": os.getenv("OLLAMA_MODEL", "llama3.1"), "prompt": prompt, "stream": False}
-        ).encode(),
+        data=json.dumps(payload).encode("utf-8"),
         headers={"Content-Type": "application/json"},
         method="POST",
     )
     try:
-        with urllib.request.urlopen(request, timeout=1.5) as response:
+        with urllib.request.urlopen(request, timeout=15.0) as response:
             result = json.loads(response.read().decode())
         message = result.get("response")
-        return message.strip() if isinstance(message, str) and message.strip() else None
+        if not isinstance(message, str):
+            return None
+        message = re.sub(r"<think>.*?</think>", "", message, flags=re.IGNORECASE | re.DOTALL)
+        message = re.sub(r"</?think>", "", message, flags=re.IGNORECASE).strip()
+        return message or None
     except (OSError, json.JSONDecodeError, AttributeError):
         return None
 
